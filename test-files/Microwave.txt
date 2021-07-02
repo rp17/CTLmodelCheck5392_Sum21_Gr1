@@ -1,0 +1,28 @@
+s1, s2, s3, s4, s5, s6, s7;
+t1 : s1 - s2,
+t2 : s2 - s5,
+t3 : s5 - s2,
+t4 : s1 - s3,
+t5 : s3 - s1,
+t6 : s3 - s6,
+t7 : s5 - s3,
+t8 : s6 - s7,
+t9 : s7 - s4,
+t10 : s4 - s4,
+t11 : s4 - s3,
+t12 : s4 - s1;
+s1 : ,
+s2 : s e,
+s3 : c,
+s4 : c h,
+s5 : s c e,
+s6 : s c,
+s7 : s c h;
+
+s2;!h;true
+s2;!h;true
+s1;EG not h;true
+s7;EG not h;false
+s2;s and EG not h;true
+s5;s and EG not h;true
+s5;EF(s and EG not h);true
