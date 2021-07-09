@@ -1,6 +1,7 @@
 package modelCheckCTL.model;
 
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class Model {
 
@@ -40,6 +41,68 @@ public class Model {
 	public void setKripkeModel(KripkeModel kripkeModel) {
 		this.kripkeModel = kripkeModel;
 	}
+	
+	private static Model loadModel(File file) {
+		
+		Model model = null;
+		try (FileInputStream fstream = new FileInputStream(file)) {
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF-8"));
+
+			String strLine;
+			StringBuffer sb = new StringBuffer();
+
+			while ((strLine = br.readLine()) != null) {
+				sb.append(strLine);
+			}
+			String modelinput = sb.toString();
+			model = new Model(modelinput);
+			//model.getKripkeModel().stateList.forEach(x -> stateSelector.addItem(x.stateName));
+			//filecontent.append(model.getKripkeModel().toString());
+			//results.setText("");
+			fstream.close();
+			
+		} catch (Exception e) {
+			System.out.println(("Exception while reading input file : " + e.getMessage()));
+		}
+		
+		return model;
+		
+	}
+	
+	public static void main(String[] args) throws IOException {
+		
+		
+		BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Enter kripke file name");
+		String kripke = f.readLine();
+		System.out.println("Enter starting state");
+		String starting = f.readLine();
+		System.out.println("Enter CTL formula");
+		String formula = f.readLine();
+		
+		//System.out.println(kripke+starting+formula);
+		
+		try {
+			File file = new File(kripke);
+			Model model = Model.loadModel(file);
+			model.setState(starting);
+			model.setExpression(formula);
+			boolean res = model.verifyFormula();
+			System.out.println("formula " + formula + " for state: " + starting + " is " + res);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+	
+			
+		
+		
+	}
+	
+	
 
 	
 }
