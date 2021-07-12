@@ -46,13 +46,10 @@ public class KripkeModel {
 	public KripkeModel clone(){
 		KripkeModel R = null;
 			R = new KripkeModel();
-			R.transList = new ArrayList<>();
 			for(ModelTransition t : this.transList)
 				R.transList.add(t);
-			R.stateList = new ArrayList<>();
 			for(ModelState t : this.stateList)
 				R.stateList.add(t);
-			R.atomsList = new ArrayList<>();
 			for(String t : this.atomsList)
 				R.atomsList.add(t);
 		
