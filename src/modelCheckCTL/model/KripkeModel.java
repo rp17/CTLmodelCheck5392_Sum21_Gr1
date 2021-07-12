@@ -36,11 +36,16 @@ public class KripkeModel {
 		}
 
 	}
+	public KripkeModel() {
+		this.transList = new ArrayList<>();
+		this.stateList = new ArrayList<>();
+		this.atomsList = new ArrayList<>();
+		
+	}
 	
 	public KripkeModel clone(){
 		KripkeModel R = null;
-		try {
-			R = new KripkeModel(this.kFileGet());
+			R = new KripkeModel();
 			R.transList = new ArrayList<>();
 			for(ModelTransition t : this.transList)
 				R.transList.add(t);
@@ -51,22 +56,17 @@ public class KripkeModel {
 			for(String t : this.atomsList)
 				R.atomsList.add(t);
 		
-			
-		} catch (Exception e) {
-			
-			System.out.println("exception" + e);;
-		}
 		
 		//for(ModelState s : R.stateList)
 		//	s.stateName += "(clone)";
 	
-		System.out.println(R.stateList.size());
+
 		
 		return R;
 	}
 
 	public KripkeModel join(KripkeModel K) {
-		for(ModelState s : this.stateList) {
+		/*for(ModelState s : this.stateList) {
 			System.out.println(s.stateName);
 			
 		}
@@ -74,7 +74,7 @@ public class KripkeModel {
 			System.out.println(t.transitionName);
 			
 		}
-		
+		*/
 		KripkeModel R = this.clone();
 		KripkeModel k = K.clone();
 		
