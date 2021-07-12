@@ -42,6 +42,9 @@ public class Model {
 		this.kripkeModel = kripkeModel;
 	}
 	
+
+	
+	
 	private static Model loadModel(File file) {
 		
 		Model model = null;
@@ -61,11 +64,11 @@ public class Model {
 			//filecontent.append(model.getKripkeModel().toString());
 			//results.setText("");
 			fstream.close();
+			model.kripkeModel.kFileSet(modelinput);
 			
 		} catch (Exception e) {
 			System.out.println(("Exception while reading input file : " + e.getMessage()));
 		}
-		
 		return model;
 		
 	}
@@ -86,6 +89,8 @@ public class Model {
 		try {
 			File file = new File(kripke);
 			Model model = Model.loadModel(file);
+			//model.kripkeModel.clone();
+			model.kripkeModel.join(model.kripkeModel.clone());
 			model.setState(starting);
 			model.setExpression(formula);
 			boolean res = model.verifyFormula();

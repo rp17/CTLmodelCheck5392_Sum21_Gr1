@@ -10,6 +10,7 @@ public class KripkeModel {
 	public ArrayList<ModelTransition> transList = new ArrayList<>();
 	public ArrayList<ModelState> stateList = new ArrayList<>();
 	public ArrayList<String> atomsList = new ArrayList<>();
+	public String fileName;
 
 	public KripkeModel(String definition) throws Exception {
 
@@ -35,7 +36,88 @@ public class KripkeModel {
 		}
 
 	}
+	
+	public KripkeModel clone(){
+		KripkeModel R = null;
+		try {
+			R = new KripkeModel(this.kFileGet());
+			R.transList = new ArrayList<>();
+			for(ModelTransition t : this.transList)
+				R.transList.add(t);
+			R.stateList = new ArrayList<>();
+			for(ModelState t : this.stateList)
+				R.stateList.add(t);
+			R.atomsList = new ArrayList<>();
+			for(String t : this.atomsList)
+				R.atomsList.add(t);
+		
+			
+		} catch (Exception e) {
+			
+			System.out.println("exception" + e);;
+		}
+		
+		//for(ModelState s : R.stateList)
+		//	s.stateName += "(clone)";
+	
+		System.out.println(R.stateList.size());
+		
+		return R;
+	}
 
+	public KripkeModel join(KripkeModel K) {
+		for(ModelState s : this.stateList) {
+			System.out.println(s.stateName);
+			
+		}
+		for(ModelTransition t : this.transList) {
+			System.out.println(t.transitionName);
+			
+		}
+		
+		KripkeModel R = this.clone();
+		KripkeModel k = K.clone();
+		
+		for(ModelState ks : k.stateList) {
+			for(ModelState s : R.stateList) {
+				ModelTransition t = new ModelTransition(s,ks);
+				t.transitionName += s.stateName + " -t- " + ks.stateName;
+				ModelTransition tR = new ModelTransition(ks,s);
+				tR.transitionName += ks.stateName + " -t- " + s.stateName;
+				
+				R.transList.add(t);
+				R.transList.add(tR);
+				
+			}
+			
+		}
+		for(ModelState ks : k.stateList) {
+			R.stateList.add(ks);
+			
+		}
+		System.out.println("------------------------------------------------------------------------------------------------------------");
+		
+		for(ModelState s : R.stateList) {
+			System.out.println(s.stateName);
+			
+		}
+		for(ModelTransition t : R.transList) {
+			System.out.println(t.transitionName);
+			
+		}
+		
+		
+		return R;
+		
+	}
+	
+	public String kFileGet() {
+		return this.fileName;
+	}
+	public void kFileSet(String s) {
+		this.fileName = s;
+	}
+	
 	private void loadStates(String[] states) throws Exception {
 
 		for (String state : states) {
