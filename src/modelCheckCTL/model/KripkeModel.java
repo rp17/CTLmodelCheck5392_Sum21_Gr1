@@ -43,6 +43,15 @@ public class KripkeModel {
 		
 	}
 	
+	public void verfiyCP() {
+		for(ModelTransition t : this.transList) {
+			t.fromState.Children.add(t.toState);
+			t.toState.Parents.add(t.fromState);
+			
+		}
+		
+	}
+	
 	public KripkeModel clone(){
 		KripkeModel R = null;
 			R = new KripkeModel();

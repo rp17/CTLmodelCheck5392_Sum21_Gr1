@@ -7,6 +7,9 @@ public class ModelState {
 
 	public List<String> atomsList = new ArrayList<>();
 	public String stateName;
+	public boolean visitable;
+	public ArrayList<ModelState> Children = new ArrayList<>();
+	public ArrayList<ModelState> Parents = new ArrayList<>();
 	
 	public ModelState() {
 		
@@ -14,6 +17,9 @@ public class ModelState {
 	
 	public ModelState(String stateName) {
 		this.stateName = stateName;
+		visitable = false;
+		Children = new ArrayList<>();
+		Parents = new ArrayList<>();
 	}
 	
 	@Override

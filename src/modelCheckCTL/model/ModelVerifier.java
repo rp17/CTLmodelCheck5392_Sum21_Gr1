@@ -158,9 +158,17 @@ public class ModelVerifier {
 				ModelTransition trans = new ModelTransition(fromState, toState);
 				if (kripkeModel.transList.contains(trans)) {
 					if (!states.contains(fromState))
-						states.add(fromState);
+						if (fromState.visitable) {
+							states.add(fromState);
+							
+					}
 				}
 			}
+		}
+		for (ModelState s : states) {
+			for (ModelState sp : s.Parents)
+				sp.visitable = true;
+			
 		}
 		return states;
 	}
