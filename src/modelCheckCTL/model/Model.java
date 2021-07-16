@@ -12,6 +12,13 @@ public class Model {
 	public Model(String kripkeString) throws Exception {
 		kripkeModel = new KripkeModel(kripkeString);
 	}
+	public Model() throws Exception {
+		
+	}
+	
+	public void setKripke(KripkeModel k) throws Exception {
+		kripkeModel = k;
+	}
 	
 	public void setState(String stateName) throws Exception {
 		state = new ModelState(stateName);
@@ -45,9 +52,9 @@ public class Model {
 
 	
 	
-	private static Model loadModel(File file) {
+	public static KripkeModel loadModel(File file) {
 		
-		Model model = null;
+		KripkeModel model = null;
 		try (FileInputStream fstream = new FileInputStream(file)) {
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF-8"));
@@ -59,12 +66,11 @@ public class Model {
 				sb.append(strLine);
 			}
 			String modelinput = sb.toString();
-			model = new Model(modelinput);
+			model = new KripkeModel(modelinput);
 			//model.getKripkeModel().stateList.forEach(x -> stateSelector.addItem(x.stateName));
 			//filecontent.append(model.getKripkeModel().toString());
 			//results.setText("");
 			fstream.close();
-			model.kripkeModel.kFileSet(modelinput);
 			
 		} catch (Exception e) {
 			System.out.println(("Exception while reading input file : " + e.getMessage()));
@@ -77,6 +83,25 @@ public class Model {
 		
 		
 		BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+		
+		System.out.println("Enter kripke file name (ctest1)");
+		String kripkeC1 = f.readLine();
+		System.out.println("Enter kripke file name (ctest2)");
+		String kripkeC2 = f.readLine();
+		try {
+			File file1 = new File(kripkeC1);
+			File file2 = new File(kripkeC2);
+			KripkeModel k1 = loadModel(file1);
+			KripkeModel k2 = loadModel(file2);
+			k1.join(k2);
+			
+			
+		}
+		catch (Exception e) {
+			
+			
+		}
+		
 		System.out.println("Enter kripke file name");
 		String kripke = f.readLine();
 		System.out.println("Enter starting state");
@@ -88,7 +113,8 @@ public class Model {
 		
 		try {
 			File file = new File(kripke);
-			Model model = Model.loadModel(file);
+			Model model = new Model();
+			model.setKripke(loadModel(file));
 			//model.kripkeModel.clone();
 			model.kripkeModel.join(model.kripkeModel.clone());
 			model.setState(starting);
