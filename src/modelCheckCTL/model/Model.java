@@ -29,6 +29,11 @@ public class Model {
 	public boolean verifyFormula() throws Exception {
 		ModelVerifier verifier = new ModelVerifier(expression, state, kripkeModel);
 		List<ModelState> states = verifier.sat(verifier.expression);
+		System.out.println("states satisfying " + verifier.expression);
+		for (ModelState s : states) {
+			System.out.println(s.stateName);
+			
+		}
 		return states.contains(state);
 	}
 	
@@ -84,26 +89,13 @@ public class Model {
 		
 		BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
 		
+
+		//System.out.println("Enter kripke file name");
+		//String kripke = f.readLine();
 		System.out.println("Enter kripke file name (ctest1)");
 		String kripkeC1 = f.readLine();
 		System.out.println("Enter kripke file name (ctest2)");
-		String kripkeC2 = f.readLine();
-		try {
-			File file1 = new File(kripkeC1);
-			File file2 = new File(kripkeC2);
-			KripkeModel k1 = loadModel(file1);
-			KripkeModel k2 = loadModel(file2);
-			k1.join(k2);
-			
-			
-		}
-		catch (Exception e) {
-			
-			
-		}
-		
-		System.out.println("Enter kripke file name");
-		String kripke = f.readLine();
+		String kripkeC2 = f.readLine();	
 		System.out.println("Enter starting state");
 		String starting = f.readLine();
 		System.out.println("Enter CTL formula");
@@ -112,9 +104,15 @@ public class Model {
 		//System.out.println(kripke+starting+formula);
 		
 		try {
-			File file = new File(kripke);
+			File file1 = new File(kripkeC1);
+			File file2 = new File(kripkeC2);
+			KripkeModel k1 = loadModel(file1);
+			k1.verfiyCP();
+			KripkeModel k2 = loadModel(file2);
+			k2.verfiyCP();
 			Model model = new Model();
-			model.setKripke(loadModel(file));
+			KripkeModel kJoined = k1.join(k2);
+			model.setKripke(kJoined);
 			//model.kripkeModel.clone();
 			model.kripkeModel.join(model.kripkeModel.clone());
 			model.setState(starting);

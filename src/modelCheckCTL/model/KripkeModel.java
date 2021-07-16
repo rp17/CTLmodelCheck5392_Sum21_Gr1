@@ -97,6 +97,10 @@ public class KripkeModel {
 			}
 			
 		}
+		for(ModelTransition t : k.transList) {
+			R.transList.add(t);
+			
+		}
 		for(ModelState ks : k.stateList) {
 			R.stateList.add(ks);
 			
