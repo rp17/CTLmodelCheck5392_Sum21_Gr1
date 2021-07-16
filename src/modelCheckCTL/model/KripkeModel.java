@@ -195,8 +195,9 @@ public class KripkeModel {
 					if (!atomsList.contains(a))
 						atomsList.add(a);
 				}
-				if(!stateList.contains(new ModelState(stateName)))
+				if(!stateList.contains(new ModelState(stateName))) {
 					throw new Exception("Invalid state : " + stateName + " in atom labels");
+				}
 
 				ModelState state = stateList.stream().filter(x -> x.stateName.equals(stateName)).findFirst().get();
 				state.atomsList = stateAtoms;
