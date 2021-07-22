@@ -2,6 +2,7 @@ package modelCheckCTL.model;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Model {
 
@@ -72,6 +73,7 @@ public class Model {
 			}
 			String modelinput = sb.toString();
 			model = new KripkeModel(modelinput);
+			model.modelString = modelinput;
 			//model.getKripkeModel().stateList.forEach(x -> stateSelector.addItem(x.stateName));
 			//filecontent.append(model.getKripkeModel().toString());
 			//results.setText("");
@@ -92,6 +94,9 @@ public class Model {
 
 		//System.out.println("Enter kripke file name");
 		//String kripke = f.readLine();
+		System.out.println("How many kripke structures");
+		int test = Integer.parseInt(f.readLine());
+		if(test == 2) {
 		System.out.println("Enter kripke file name (ctest1)");
 		String kripkeC1 = f.readLine();
 		System.out.println("Enter kripke file name (ctest2)");
@@ -107,22 +112,102 @@ public class Model {
 			File file1 = new File(kripkeC1);
 			File file2 = new File(kripkeC2);
 			KripkeModel k1 = loadModel(file1);
-			k1.verfiyCP();
+			k1.verifyCP();
 			KripkeModel k2 = loadModel(file2);
-			k2.verfiyCP();
+			k2.verifyCP();
 			Model model = new Model();
 			KripkeModel kJoined = k1.join(k2);
 			model.setKripke(kJoined);
 			//model.kripkeModel.clone();
-			model.kripkeModel.join(model.kripkeModel.clone());
 			model.setState(starting);
 			model.setExpression(formula);
+			long start = System.nanoTime();
+
 			boolean res = model.verifyFormula();
+			long end = System.nanoTime();
+
 			System.out.println("formula " + formula + " for state: " + starting + " is " + res);
+
+			long durationInNano = end-start;
+			long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);
+			System.out.println(durationInMillis);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		}
+		else {
+			System.out.println("Enter kripke file name (ctest1)");
+			String kripkeC1 = f.readLine();
+			System.out.println("Enter kripke file name (ctest2)");
+			String kripkeC2 = f.readLine();	
+			System.out.println("Enter kripke file name (ctest3)");
+			String kripkeC3 = f.readLine();	
+			System.out.println("Enter starting state");
+			String starting = f.readLine();
+			System.out.println("Enter CTL formula");
+			String formula = f.readLine();
+			System.out.println("number of 2 clones");
+			int clones = Integer.parseInt(f.readLine());
+			
+			//System.out.println(kripke+starting+formula);
+			
+			try {
+				File file1 = new File(kripkeC1);
+				File file2 = new File(kripkeC2);
+				File file3 = new File(kripkeC3);
+				KripkeModel k1 = loadModel(file1);
+				k1.verifyCP();
+				KripkeModel k2 = loadModel(file2);
+				k2.verifyCP();
+				KripkeModel k3 = loadModel(file3);
+				k3.verifyCP();
+				Model model = new Model();
+				KripkeModel kJoined = k1.join(k2);
+				kJoined = kJoined.join(k3);
+				//model.kripkeModel.clone();
+				
+				for(int i = 0; i < clones; i++) {
+					//System.out.println(k2.modelString);
+					KripkeModel clone2 = new KripkeModel(k2.modelString, i);
+					clone2.verifyCP();
+					
+					kJoined = kJoined.join(clone2);
+					
+				}
+				/*KripkeModel clone2 = new KripkeModel(k2.modelString, 0);
+				clone2.verifyCP();
+				
+				kJoined = kJoined.join(clone2);*/
+				
+				KripkeModel clone3 = new KripkeModel(k2.modelString, 1);
+				clone3.verifyCP();
+				
+				kJoined = kJoined.join(clone3);
+				model.setKripke(kJoined);
+				model.setState(starting);
+				model.setExpression(formula);
+				
+				long start = System.nanoTime();
+
+				boolean res = model.verifyFormula();
+				long end = System.nanoTime();
+
+				System.out.println("formula " + formula + " for state: " + starting + " is " + res);
+
+				System.out.println(end-start);
+				long durationInNano = end-start;
+				long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);
+				System.out.println(durationInMillis);
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 		}
 			
 	

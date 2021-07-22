@@ -11,6 +11,8 @@ import modelCheckCTL.util.ModelVerifierUtils;
 
 public class ModelVerifier {
 
+	public static boolean firstTime = true;
+	public static boolean viablePathway = false;
 	private KripkeModel kripkeModel;
 	public String expression;
 	private Map<String, String> converstionMap;
@@ -31,7 +33,7 @@ public class ModelVerifier {
 		expression = ex.expression;
 		String leftExpr = ex.leftExpr;
 		String rightExpr = ex.rightExpr;
-
+		System.out.println("satType :" + satType);
 		switch (satType) {
 		case Constants.ALLTRUE:
 			statesList.addAll(kripkeModel.stateList);
@@ -99,6 +101,7 @@ public class ModelVerifier {
 			statesList = sat(auFormula);
 			break;
 		case Constants.EU:
+			System.out.println("aaaa");
 			statesList = satEU(leftExpr, rightExpr);
 			break;
 		case Constants.EF:
@@ -141,36 +144,102 @@ public class ModelVerifier {
 
 	private List<ModelState> preA(List<ModelState> result) {
 
-		List<ModelState> preEYStates = preE(result);
+		List<ModelState> preEYStates = preE(result, "");
 		List<ModelState> diffList = new ArrayList<>();
 		diffList.addAll(kripkeModel.stateList);
 		diffList.removeAll(result);
-		List<ModelState> preEDiffList = preE(diffList);
+		List<ModelState> preEDiffList = preE(diffList, "");
 		preEYStates.removeAll(preEDiffList);
 		return preEYStates;
 	}
 
-	private List<ModelState> preE(List<ModelState> result) {
-
+	private List<ModelState> preE(List<ModelState> result, String CTLF) {
+		
 		List<ModelState> states = new ArrayList<>();
+		
+		if(firstTime) {
+			for(ModelState s : result) {
+				for(ModelState p : s.Parents)
+					p.visitable = true;
+				s.visited = true;
+				states.add(s);
+				
+			}
+			
+		}
+		
 		for (ModelState fromState : kripkeModel.stateList) {
 			for (ModelState toState : result) {
 				ModelTransition trans = new ModelTransition(fromState, toState);
+				//System.out.println(fromState.stateName + " " + toState.stateName + " " + fromState.visitable + " " + (toState.originalK == fromState.originalK));
 				if (kripkeModel.transList.contains(trans)) {
-					if (!states.contains(fromState))
-						//if (fromState.visitable) {
-							states.add(fromState);
-							
+					if (!states.contains(fromState)) {
+							if(toState.originalK == fromState.originalK && fromState.visitable) {
+								states.add(fromState);
+								fromState.visited = true;
+						}
+							else {
+								//System.out.println("papdw");
+									viablePathway = false;
+									DFSparents(toState, 0, CTLF);
+									if(viablePathway) {
+										states.add(fromState);
+										fromState.visited = true;
+										viablePathway = false;
+									}
+								
+								}
+								
+							}
+						}	
 					
 				}
+		}
+	System.out.println("----S----");
+		for (ModelState s : states) {
+			System.out.print(s.stateName + " ");
+			for (ModelState sp : s.Parents) {
+				sp.visitable = true;
+			//	System.out.println(sp.stateName);
+			}
+			
+		}
+		System.out.println();
+		return states;
+	}
+	
+	public void DFSparents(ModelState s, int c, String prop) {
+		//System.out.println(s.stateName + " " + s.originalModel.root.stateName);
+		if(prop.length() == 0) {
+		if(s.equals(s.originalModel.root))
+			viablePathway = true;
+		}
+		else {
+			if(s.equals(s.originalModel.root) && s.originalModel.root.atomsList.contains(prop))
+				viablePathway = true;
+			
+		}
+		
+		if(c > s.originalModel.stateList.size() + 1)
+			return;
+		if(prop.length() == 0) {
+			for(ModelState f : s.Parents) {
+				//System.out.println(s.stateName + " " + f.stateName + f.visited);
+				if(f.visited)
+					DFSparents(f, c+1, prop);
 			}
 		}
-		/*for (ModelState s : states) {
-			for (ModelState sp : s.Parents)
-				sp.visitable = true;
+		else {
+			for(ModelState f : s.Parents) {
+				//System.out.println(s.stateName + " " + f.stateName + f.visited);
+				if(f.visited && f.atomsList.contains(prop))
+					DFSparents(f, c+1, prop);
+			}
 			
-		}*/
-		return states;
+		}
+				
+			
+		
 	}
 
 	private List<ModelState> satEX(String expression) throws Exception {
@@ -178,24 +247,34 @@ public class ModelVerifier {
 		List<ModelState> x = new ArrayList<>();
 		List<ModelState> y = new ArrayList<>();
 		x = sat(expression);
-		y = preE(x);
+		y = preE(x, "");
 		return y;
 	}
 
-	private List<ModelState> satEU(String leftExpr, String rightExpr) throws Exception {
+	private List<ModelState> satEU(String leftExpr, String rightExpr) {
 
 		List<ModelState> w = new ArrayList<>();
 		List<ModelState> x = new ArrayList<>();
 		List<ModelState> y = new ArrayList<>();
 
-		w = sat(leftExpr);
+		try {
+			w = sat(leftExpr);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			
+		}
 		x.addAll(kripkeModel.stateList);
-		y = sat(rightExpr);
-
+		try {
+			y = sat(rightExpr);
+		} catch (Exception e1) {
+			System.out.println("Y!" );
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		while (!(x.size() == y.size() && x.containsAll(y))) {
 			x = y;
 			List<ModelState> newY = new ArrayList<>();
-			List<ModelState> preEStates = preE(y);
+			List<ModelState> preEStates = preE(y, leftExpr);
 			newY.addAll(y);
 			List<ModelState> wAndPreE = new ArrayList<>();
 			for (ModelState state : w) {
@@ -208,6 +287,9 @@ public class ModelVerifier {
 			}
 			y = newY;
 		}
+		/*System.out.println("y");
+		for(ModelState s : y)
+			System.out.println(s.stateName);*/
 		return y;
 	}
 

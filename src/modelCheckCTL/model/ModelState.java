@@ -10,16 +10,20 @@ public class ModelState {
 	public boolean visitable;
 	public ArrayList<ModelState> Children = new ArrayList<>();
 	public ArrayList<ModelState> Parents = new ArrayList<>();
+	public int originalK;
+	public KripkeModel originalModel;
+	
+	public boolean visited;
 	
 	public ModelState() {
 		
-	}
+	}		
+	
 	
 	public ModelState(String stateName) {
 		this.stateName = stateName;
 		visitable = false;
-		Children = new ArrayList<>();
-		Parents = new ArrayList<>();
+		visited = false;
 	}
 	
 	@Override
