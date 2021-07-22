@@ -89,8 +89,8 @@ public class Model {
 	public static void main(String[] args) throws IOException {
 		
 		
-		BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
-		
+		//BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
 
 		//System.out.println("Enter kripke file name");
 		//String kripke = f.readLine();
@@ -116,7 +116,7 @@ public class Model {
 			KripkeModel k2 = loadModel(file2);
 			k2.verifyCP();
 			Model model = new Model();
-			KripkeModel kJoined = k1.join(k2);
+			KripkeModel kJoined = k1.join(k2, 1);
 			model.setKripke(kJoined);
 			//model.kripkeModel.clone();
 			model.setState(starting);
@@ -164,8 +164,8 @@ public class Model {
 				KripkeModel k3 = loadModel(file3);
 				k3.verifyCP();
 				Model model = new Model();
-				KripkeModel kJoined = k1.join(k2);
-				kJoined = kJoined.join(k3);
+				KripkeModel kJoined = k1.join(k2, 1);
+				kJoined = kJoined.join(k3, 3);
 				//model.kripkeModel.clone();
 				
 				for(int i = 0; i < clones; i++) {
@@ -173,18 +173,27 @@ public class Model {
 					KripkeModel clone2 = new KripkeModel(k2.modelString, i);
 					clone2.verifyCP();
 					
-					kJoined = kJoined.join(clone2);
+					kJoined = kJoined.join(clone2, i + 4);
 					
 				}
 				/*KripkeModel clone2 = new KripkeModel(k2.modelString, 0);
 				clone2.verifyCP();
 				
-				kJoined = kJoined.join(clone2);*/
+				kJoined = kJoined.join(clone2, 4);
+				for(ModelState s : kJoined.stateList)
+					System.out.print(s.stateName);
+				System.out.println();
+	
 				
 				KripkeModel clone3 = new KripkeModel(k2.modelString, 1);
 				clone3.verifyCP();
 				
-				kJoined = kJoined.join(clone3);
+				kJoined = kJoined.join(clone3, 5);
+				
+				for(ModelState s : kJoined.stateList)
+					System.out.print(s.stateName + " " + s.originalK + " ");
+				System.out.println();*/
+				
 				model.setKripke(kJoined);
 				model.setState(starting);
 				model.setExpression(formula);

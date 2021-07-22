@@ -6,7 +6,6 @@ import java.util.List;
 import modelCheckCTL.util.Constants;
 
 public class KripkeModel {
-	public static int counter = 1;
 
 	public ArrayList<ModelTransition> transList = new ArrayList<>();
 	public ArrayList<ModelState> stateList = new ArrayList<>();
@@ -99,12 +98,13 @@ public class KripkeModel {
 				R.stateList.add(t);
 			for(String t : this.atomsList)
 				R.atomsList.add(t);
+			R.joined = this.joined;
 		
 		
 		return R;
 	}
 
-	public KripkeModel join(KripkeModel K) {
+	public KripkeModel join(KripkeModel K, int counter) {
 		KripkeModel R = this.clone();
 		KripkeModel Rc = R.clone();
 		if(!R.joined) {
@@ -113,17 +113,15 @@ public class KripkeModel {
 			s.originalModel = Rc;
 		}
 		Rc.setRoot();
-		counter++;
 		}
 		KripkeModel k = K.clone();
 		KripkeModel Kc = K.clone();
 		if(!k.joined) {
 		for(ModelState s : K.stateList) {
-			s.originalK = counter;
+			s.originalK = counter + 1;
 			s.originalModel = Kc;
 		}
 		Kc.setRoot();
-		counter++;
 		}
 		
 		for(ModelState ks : k.stateList) {
@@ -198,7 +196,7 @@ public class KripkeModel {
 			st.stateName = state.replaceAll("[^a-zA-Z0-9]", "");
 
 			if (!stateList.contains(st)) {
-				st.stateName += " " + i;
+				st.stateName += "-" + i;
 				stateList.add(st);
 				// state.
 				// System.out.println("State = -"+st.stateName+"-");
@@ -250,8 +248,8 @@ public class KripkeModel {
 
 			String transitionName = parsedTrans[0];
 			String[] fromToStates = parsedTrans[1].split(Constants.TRANSITION_SEPARATER);
-			fromToStates[0] += " " + i;
-			fromToStates[1] += " " + i;
+			fromToStates[0] += "-" + i;
+			fromToStates[1] += "-" + i;
 			if (fromToStates.length != 2)
 				throw new Exception("Invalid from state and to state description for transition : " + transitionName);
 			if(!stateList.contains(new ModelState(fromToStates[0])))
@@ -268,7 +266,7 @@ public class KripkeModel {
 
 			ModelTransition trans = new ModelTransition(fromState, toState, transitionName);
 			if (!transList.contains(trans)) {
-				trans.transitionName += " " + i;
+				trans.transitionName += "-" + i;
 				transList.add(trans);
 			}
 			else
@@ -318,7 +316,7 @@ public class KripkeModel {
 			if (parsedAtom == null || parsedAtom.length != 2)
 				throw new Exception("Invalid atoms definition");
 
-			String stateName = (parsedAtom[0].trim()) + " " + i;
+			String stateName = (parsedAtom[0].trim()) + "-" + i;
 			String[] atomList = parsedAtom[1].trim().split(Constants.SPACE_CHAR);
 
 			List<String> stateAtoms = new ArrayList<>();

@@ -1,0 +1,7 @@
+3
+ks1.txt
+ks2(2).txt
+ks3.txt
+s1
+E(pUq)
+50

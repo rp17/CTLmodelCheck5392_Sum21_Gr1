@@ -33,7 +33,7 @@ public class ModelVerifier {
 		expression = ex.expression;
 		String leftExpr = ex.leftExpr;
 		String rightExpr = ex.rightExpr;
-		System.out.println("satType :" + satType);
+		//System.out.println("satType :" + satType);
 		switch (satType) {
 		case Constants.ALLTRUE:
 			statesList.addAll(kripkeModel.stateList);
@@ -101,7 +101,6 @@ public class ModelVerifier {
 			statesList = sat(auFormula);
 			break;
 		case Constants.EU:
-			System.out.println("aaaa");
 			statesList = satEU(leftExpr, rightExpr);
 			break;
 		case Constants.EF:
@@ -171,7 +170,7 @@ public class ModelVerifier {
 		for (ModelState fromState : kripkeModel.stateList) {
 			for (ModelState toState : result) {
 				ModelTransition trans = new ModelTransition(fromState, toState);
-				//System.out.println(fromState.stateName + " " + toState.stateName + " " + fromState.visitable + " " + (toState.originalK == fromState.originalK));
+				//System.out.println(fromState.stateName + " " + toState.stateName + " " + fromState.visitable + " " + (toState.originalK == fromState.originalK) + toState.originalK + fromState.originalK);
 				if (kripkeModel.transList.contains(trans)) {
 					if (!states.contains(fromState)) {
 							if(toState.originalK == fromState.originalK && fromState.visitable) {
@@ -195,7 +194,7 @@ public class ModelVerifier {
 					
 				}
 		}
-	System.out.println("----S----");
+	/*System.out.println("----S----");
 		for (ModelState s : states) {
 			System.out.print(s.stateName + " ");
 			for (ModelState sp : s.Parents) {
@@ -204,7 +203,7 @@ public class ModelVerifier {
 			}
 			
 		}
-		System.out.println();
+		System.out.println();*/
 		return states;
 	}
 	
