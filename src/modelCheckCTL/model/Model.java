@@ -91,6 +91,8 @@ public class Model {
 		
 		//BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
 		BufferedReader f = new BufferedReader(new FileReader("input.txt"));
+        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.txt")));
+
 
 		//System.out.println("Enter kripke file name");
 		//String kripke = f.readLine();
@@ -175,6 +177,23 @@ public class Model {
 					
 					kJoined = kJoined.join(clone2, i + 4);
 					
+					model.setKripke(kJoined);
+					model.setState(starting);
+					model.setExpression(formula);
+					
+					long start = System.nanoTime();
+
+					boolean res = model.verifyFormula();
+					long end = System.nanoTime();
+
+					System.out.println("formula " + formula + " for state: " + starting + " is " + res);
+
+					System.out.println(end-start);
+					long durationInNano = end-start;
+					long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);
+					System.out.println(durationInMillis);
+					out.println(durationInMillis);
+					
 				}
 				/*KripkeModel clone2 = new KripkeModel(k2.modelString, 0);
 				clone2.verifyCP();
@@ -193,22 +212,9 @@ public class Model {
 				for(ModelState s : kJoined.stateList)
 					System.out.print(s.stateName + " " + s.originalK + " ");
 				System.out.println();*/
+				out.close();
 				
-				model.setKripke(kJoined);
-				model.setState(starting);
-				model.setExpression(formula);
 				
-				long start = System.nanoTime();
-
-				boolean res = model.verifyFormula();
-				long end = System.nanoTime();
-
-				System.out.println("formula " + formula + " for state: " + starting + " is " + res);
-
-				System.out.println(end-start);
-				long durationInNano = end-start;
-				long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);
-				System.out.println(durationInMillis);
 				
 				
 			} catch (Exception e) {

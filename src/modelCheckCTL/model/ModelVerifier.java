@@ -194,16 +194,16 @@ public class ModelVerifier {
 					
 				}
 		}
-	/*System.out.println("----S----");
+	//System.out.println("----S----");
 		for (ModelState s : states) {
-			System.out.print(s.stateName + " ");
+			//System.out.print(s.stateName + " ");
 			for (ModelState sp : s.Parents) {
 				sp.visitable = true;
 			//	System.out.println(sp.stateName);
 			}
 			
 		}
-		System.out.println();*/
+		//System.out.println();
 		return states;
 	}
 	
